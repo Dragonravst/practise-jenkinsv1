@@ -37,5 +37,11 @@ pipeline {
         always {
             sh 'echo "Pipeline finished"'
         }
+        success{
+            sh '''
+                echo "build success"
+                '''
+        }
+        
     }
 }
