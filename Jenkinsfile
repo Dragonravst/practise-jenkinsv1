@@ -1,22 +1,28 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:latest'  // Use a Docker image that includes Docker CLI and tools
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Mount the host's Docker socket for access
+        }
+    }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout scm  // Checks out from the configured SCM (e.g., your GitHub repo)
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t my-nodejs-app:latest .'
+                sh 'docker --version'  // Optional: Verify Docker is accessible
+                sh 'docker build -t my-nodejs-app:latest .'  // Build the image
             }
         }
 
         stage('Test') {
             steps {
-                sh 'echo "Running tests..."'
+                sh 'echo "Running tests..."'  // Placeholder for actual tests (e.g., run npm test if you have a Node.js app)
             }
         }
 
