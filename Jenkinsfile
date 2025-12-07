@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20'                     // Node.js + npm
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // allow docker commands
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = "my-nodejs-app"
@@ -12,13 +7,19 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                checkout scm
+                git url: 'https://github.com/Dragonravst/practise-jenkinsv1.git'
             }
         }
 
         stage('Install Dependencies') {
+            agent {
+                docker {
+                    image 'node:20'
+                }
+            }
             steps {
                 sh 'npm install'
             }
