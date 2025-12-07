@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:20'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         IMAGE_NAME = "my-nodejs-app"
@@ -10,16 +15,11 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Dragonravst/practise-jenkinsv1.git'
+                git url: 'https://github.com/Dragonravst/practise-jenkinsv1.git', branch: 'main'
             }
         }
 
         stage('Install Dependencies') {
-            agent {
-                docker {
-                    image 'node:20'
-                }
-            }
             steps {
                 sh 'npm install'
             }
@@ -31,11 +31,23 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                sh 'echo "Running tests..."'
+            }
+        }
+
         stage('Deploy') {
             steps {
                 sh "docker rm -f ${CONTAINER_NAME} || true"
                 sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${IMAGE_NAME}"
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished'
         }
     }
 }
