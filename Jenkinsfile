@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent any       // run on Jenkins host directly (NOT inside node container)
 
     environment {
         IMAGE_NAME = "my-nodejs-app"
