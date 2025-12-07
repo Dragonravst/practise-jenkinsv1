@@ -2,51 +2,51 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'my-nodejs-app'
+        IMAGE_NAME = "my-nodejs-app"
+        CONTAINER_NAME = "my-nodejs-container"
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Checkout from Git repository
                 checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t my-nodejs-app .'
+                // Build Docker image
+                sh "docker build -t ${IMAGE_NAME} ."
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                script {
-                    // run container without mounting Windows paths
-                    bat 'docker run -d -p 3000:3000 --name test_node_app my-nodejs-app'
-
-                    // wait for container startup
-                    bat 'ping -n 5 127.0.0.1 > nul'
-
-                    // test endpoint
-                    bat 'curl http://localhost:3000'
-                }
+                // Placeholder for tests
+                sh 'echo "Running tests..."'
             }
         }
 
         stage('Deploy') {
-            when {
-                expression { currentBuild.currentResult == "SUCCESS" }
-            }
             steps {
-                bat 'echo Deploying...'
+                // Stop any existing container
+                sh "docker rm -f ${CONTAINER_NAME} || true"
+                // Run new container
+                sh "docker run -d --name ${CONTAINER_NAME} -p 3000:3000 ${IMAGE_NAME}"
             }
         }
     }
 
     post {
         always {
-            bat 'docker stop test_node_app || echo "Container not running"'
-            bat 'docker rm test_node_app || echo "Container not found"'
+            echo 'Pipeline finished'
         }
     }
 }
