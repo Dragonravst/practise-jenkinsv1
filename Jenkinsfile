@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = "my-nodejs-app"
@@ -12,10 +7,9 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Dragonravst/practise-jenkinsv1.git', branch: 'main'
+                checkout scm
             }
         }
 
