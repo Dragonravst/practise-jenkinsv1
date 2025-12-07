@@ -1,5 +1,5 @@
 pipeline {
-    agent any       // run on Jenkins host directly (NOT inside node container)
+    agent any
 
     environment {
         IMAGE_NAME = "my-nodejs-app"
@@ -7,9 +7,10 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/Dragonravst/practise-jenkinsv1.git'
             }
         }
 
@@ -41,7 +42,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline finished'
+            echo "Pipeline finished"
         }
     }
 }
